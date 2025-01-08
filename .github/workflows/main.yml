@@ -23,7 +23,7 @@ jobs:
 
       # 第三步：构建 Hugo 网站
       - name: Build Hugo site
-        run: hugo --minify  # 使用 --minify 参数来压缩构建的文件
+        run: hugo --cleanDestinationDir --minify  # 使用 --minify 参数来压缩构建的文件
 
       # 第四步：部署到 GitHub Pages
       - name: Deploy to GitHub Pages
