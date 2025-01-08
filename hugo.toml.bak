@@ -1,4 +1,4 @@
-baseURL = 'https://cl900503.github.io/'
+baseURL = 'https://cl900503.github.io/vrvsite/'
 languageCode = 'en-us'
 title = 'My New Hugo Site'
 theme = 'hugo-PaperMod'
