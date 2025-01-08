@@ -1,37 +1,33 @@
-name: Deploy Hugo Site
+name: Deploy Hugo Site to GitHub Pages
 
-# 触发条件：当代码推送到 main 分支时运行
+# 触发条件：当推送到 main 分支时触发部署
 on:
   push:
     branches:
-      - main
+      - main  # 你可以修改为其他分支，例如 `master` 或 `deploy`
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 检出代码
+      # 第一步：Checkout 代码
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 设置 Hugo 环境
+      # 第二步：设置 Hugo 环境
       - name: Set up Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: 'latest' # 使用最新版本的 Hugo
+          hugo-version: 'latest'  # 你可以指定 Hugo 的版本，例如 '0.119.0'
 
-      # 安装主题（如果有子模块）
-      - name: Install submodules
-        run: git submodule update --init --recursive
-
-      # 构建 Hugo 网站
+      # 第三步：构建 Hugo 网站
       - name: Build Hugo site
-        run: hugo --minify
+        run: hugo --minify  # 使用 --minify 参数来压缩构建的文件
 
-      # 部署到 GitHub Pages
+      # 第四步：部署到 GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs # Hugo 默认生成文件夹
+          publish_dir: ./docs  # Hugo 默认的输出文件夹是 ./public
