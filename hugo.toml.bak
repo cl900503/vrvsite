@@ -1,7 +1,5 @@
-baseURL = 'https://cl900503.github.io/vrvsite/'
+baseURL = 'https://cl900503.github.io/'
 languageCode = 'en-us'
 title = 'My New Hugo Site'
 theme = 'hugo-PaperMod'
 publishDir = "docs"
-relativeURLs = true
-canonifyURLs = false
