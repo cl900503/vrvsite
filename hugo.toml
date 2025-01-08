@@ -1,6 +1,6 @@
 baseURL = 'https://cl900503.github.io/vrvsite/'
 languageCode = 'en-us'
-title = 'vrv site 2'
+title = 'vrv site 3'
 theme = 'hugo-PaperMod'
 publishDir = "docs"
 params.assets.disableFingerprinting = true
