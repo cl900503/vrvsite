@@ -24,14 +24,14 @@ jobs:
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: 'latest'  # 你可以指定 Hugo 的版本，例如 '0.119.0'
-          
-      # 打印 public 目录文件
-      - name: Check public folder
-        run: ls -R ./public
 
       # 第三步：构建 Hugo 网站
       - name: Build Hugo site
         run: hugo --cleanDestinationDir --minify  # 使用 --minify 参数来压缩构建的文件
+
+      # 打印 public 目录文件
+      - name: Check public folder
+        run: ls -R ./public
 
       # 第四步：部署到 GitHub Pages
       - name: Deploy to GitHub Pages
