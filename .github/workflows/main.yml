@@ -15,6 +15,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 清理 public 文件
+      - name: Checkout code
+        run: rm -rf public
+        
       # 第二步：设置 Hugo 环境
       - name: Set up Hugo
         uses: peaceiris/actions-hugo@v2
@@ -22,7 +26,7 @@ jobs:
           hugo-version: 'latest'  # 你可以指定 Hugo 的版本，例如 '0.119.0'
           
       # 打印 public 目录文件
-      - name: Debug Build
+      - name: Check public folder
         run: ls -R ./public
 
       # 第三步：构建 Hugo 网站
@@ -35,3 +39,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public  # Hugo 默认的输出文件夹是 ./public
+          force_orphan: true
