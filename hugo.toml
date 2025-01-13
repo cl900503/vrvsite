@@ -1,5 +1,5 @@
 baseURL = 'https://cl900503.github.io/vrvsite/'
 languageCode = 'en-us'
 title = 'vrv site 8'
-theme = 'docsy'
+theme = 'texify3'
 params.assets.disableFingerprinting = true
