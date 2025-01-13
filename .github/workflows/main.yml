@@ -27,11 +27,11 @@ jobs:
 
       # 下载主题（如果使用 Git 子模块）
       - name: Update Hugo Theme (Submodules)
-        run: git submodule add https://github.com/google/docsy.git themes/docsy
+        run: git submodule update --init --recursive
 
       # 第三步：构建 Hugo 网站
       - name: Build Hugo site
-        run: hugo --cleanDestinationDir --minify --theme docsy # 使用 --minify 参数来压缩构建的文件
+        run: hugo --cleanDestinationDir --minify # 使用 --minify 参数来压缩构建的文件
 
       # 打印 public 目录文件
       - name: Check public folder
