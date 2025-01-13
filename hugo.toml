@@ -3,3 +3,7 @@ languageCode = 'en-us'
 title = 'vrv site 8'
 theme = 'hugo-PaperMod'
 params.assets.disableFingerprinting = true
+[module]
+  [[module.imports]]
+    path = "https://github.com/google/docsy.git"
+    disable = false
