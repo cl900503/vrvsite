@@ -3,4 +3,5 @@ languageCode = 'en-us'
 title = 'vrv site 8'
 theme = 'hugo-PaperMod'
 params.assets.disableFingerprinting = true
-relativeURLs = true
+relativeURLs = false
+canonifyURLs = true
