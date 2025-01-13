@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/vrvsite/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=vrvsite/livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Redis 开启 SSL | vrv site</title>
+<meta name="keywords" content="">
+<meta name="description" content="[TOC]
+Redis 开启 SSL
+
+在 Redis 6.0 版本之后，官方开始支持SSL/TLS。
+
+Redis 服务如何开启 SSL
+修改如下配置
+
+  
+      
+          属性
+          值
+          注
+      
+  
+  
+      
+          port
+          0
+          禁用未加密的普通 Redis 端口
+      
+      
+          tls-port
+          6379
+          指定 Redis TLS 端口
+      
+      
+          tls-cert-file
+          /certs/redis.crt
+          服务器证书
+      
+      
+          tls-key-file
+          /certs/redis.key
+          服务器私钥
+      
+      
+          tls-ca-cert-file
+          /certs/ca.crt
+          CA 根证书
+      
+      
+          tls-auth-clients
+          optional
+          yes：客户端必须使用受信任的证书optional：客户端可以使用受信任的证书或者不使用证书
+      
+  
+
+适配方案
+配置中心-Redis
+standalone
+未开启 ssl
+{
+    &#34;codecEnabled&#34;:true,
+    &#34;key&#34;:&#34;&lt;random&gt;&#34;,
+    &#34;type&#34;:&#34;standalone&#34;,
+    &#34;password&#34;:&#34;&lt;密文&gt;&#34;,
+    &#34;standalone&#34;:{
+        &#34;host&#34;:&#34;127.0.0.1&#34;,
+        &#34;port&#34;:6379,
+        &#34;ssl&#34;:false
+    }
+}
+开启 ssl
+{
+    &#34;codecEnabled&#34;: true,
+    &#34;key&#34;: &#34;&lt;random&gt;&#34;,
+    &#34;type&#34;: &#34;standalone&#34;,
+    &#34;password&#34;: &#34;&lt;密文&gt;&#34;,
+    &#34;standalone&#34;: {
+        &#34;host&#34;: &#34;127.0.0.1&#34;,
+        &#34;port&#34;: 6379
+    },
+    &#34;ssl&#34;: true,
+    &#34;caCertFile&#34;: &#34;/certs/ca.crt&#34;,
+    &#34;clientCertFile&#34;: &#34;/certs/redis-client.crt&#34;,
+    &#34;clientKeyFile&#34;: &#34;/certs/redis-client.key&#34;
+}
+cluster
+未开启 ssl
+{
+    &#34;codecEnabled&#34;: true,
+    &#34;key&#34;: &#34;&lt;random&gt;&#34;,
+    &#34;type&#34;: &#34;cluster&#34;,
+    &#34;password&#34;: &#34;&lt;密文&gt;&#34;,
+    &#34;cluster&#34;: [
+        {
+            &#34;host&#34;: &#34;192.168.0.1&#34;,
+            &#34;port&#34;: 6379,
+            &#34;ssl&#34;: false
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.2&#34;,
+            &#34;port&#34;: 6379,
+            &#34;ssl&#34;: false
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.3&#34;,
+            &#34;port&#34;: 6379,
+            &#34;ssl&#34;: false
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.4&#34;,
+            &#34;port&#34;: 6379,
+            &#34;ssl&#34;: false
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.5&#34;,
+            &#34;port&#34;: 6379,
+            &#34;ssl&#34;: false
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.6&#34;,
+            &#34;port&#34;: 6379,
+            &#34;ssl&#34;: false
+        }
+    ]
+}
+开启 ssl
+{
+    &#34;codecEnabled&#34;: true,
+    &#34;key&#34;: &#34;&lt;random&gt;&#34;,
+    &#34;type&#34;: &#34;cluster&#34;,
+    &#34;password&#34;: &#34;&lt;密文&gt;&#34;,
+    &#34;cluster&#34;: [
+        {
+            &#34;host&#34;: &#34;192.168.0.1&#34;,
+            &#34;port&#34;: 6379
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.2&#34;,
+            &#34;port&#34;: 6379
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.3&#34;,
+            &#34;port&#34;: 6379
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.4&#34;,
+            &#34;port&#34;: 6379
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.5&#34;,
+            &#34;port&#34;: 6379
+        },
+        {
+            &#34;host&#34;: &#34;192.168.0.6&#34;,
+            &#34;port&#34;: 6379
+        }
+    ],
+    &#34;ssl&#34;: true,
+    &#34;caCertFile&#34;: &#34;/certs/ca.crt&#34;,
+    &#34;clientCertFile&#34;: &#34;/certs/redis-client.crt&#34;,
+    &#34;clientKeyFile&#34;: &#34;/certs/redis-client.key&#34;
+}
+java-ssl
+方案一：不配置证书（仅使用安全协议）
+
+tls-auth-clients optional">
+<meta name="author" content="">
+<link rel="canonical" href="http://192.168.81.98:1313/vrvsite/posts/redis-ssl/">
+<link crossorigin="anonymous" href="/vrvsite/assets/css/stylesheet.css" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://192.168.81.98:1313/vrvsite/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://192.168.81.98:1313/vrvsite/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://192.168.81.98:1313/vrvsite/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://192.168.81.98:1313/vrvsite/apple-touch-icon.png">
+<link rel="mask-icon" href="http://192.168.81.98:1313/vrvsite/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://192.168.81.98:1313/vrvsite/posts/redis-ssl/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://192.168.81.98:1313/vrvsite/" accesskey="h" title="vrv site (Alt + H)">vrv site</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Redis 开启 SSL
+    </h1>
+    <div class="post-meta"><span title='2025-01-13 10:00:00 +0800 CST'>January 13, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>[TOC]</p>
+<h1 id="redis-开启-ssl">Redis 开启 SSL<a hidden class="anchor" aria-hidden="true" href="#redis-开启-ssl">#</a></h1>
+<blockquote>
+<p>在 Redis 6.0 版本之后，官方开始支持SSL/TLS。</p>
+</blockquote>
+<h2 id="redis-服务如何开启-ssl">Redis 服务如何开启 SSL<a hidden class="anchor" aria-hidden="true" href="#redis-服务如何开启-ssl">#</a></h2>
+<h3 id="修改如下配置">修改如下配置<a hidden class="anchor" aria-hidden="true" href="#修改如下配置">#</a></h3>
+<table>
+  <thead>
+      <tr>
+          <th>属性</th>
+          <th>值</th>
+          <th>注</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>port</td>
+          <td>0</td>
+          <td>禁用未加密的普通 Redis 端口</td>
+      </tr>
+      <tr>
+          <td>tls-port</td>
+          <td>6379</td>
+          <td>指定 Redis TLS 端口</td>
+      </tr>
+      <tr>
+          <td>tls-cert-file</td>
+          <td>/certs/redis.crt</td>
+          <td>服务器证书</td>
+      </tr>
+      <tr>
+          <td>tls-key-file</td>
+          <td>/certs/redis.key</td>
+          <td>服务器私钥</td>
+      </tr>
+      <tr>
+          <td>tls-ca-cert-file</td>
+          <td>/certs/ca.crt</td>
+          <td>CA 根证书</td>
+      </tr>
+      <tr>
+          <td>tls-auth-clients</td>
+          <td>optional</td>
+          <td>yes：客户端必须使用受信任的证书<!-- raw HTML omitted -->optional：客户端可以使用受信任的证书或者不使用证书</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="适配方案">适配方案<a hidden class="anchor" aria-hidden="true" href="#适配方案">#</a></h2>
+<h3 id="配置中心-redis">配置中心-Redis<a hidden class="anchor" aria-hidden="true" href="#配置中心-redis">#</a></h3>
+<h4 id="standalone">standalone<a hidden class="anchor" aria-hidden="true" href="#standalone">#</a></h4>
+<h5 id="未开启-ssl">未开启 ssl<a hidden class="anchor" aria-hidden="true" href="#未开启-ssl">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;codecEnabled&#34;</span>:<span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;key&#34;</span>:<span style="color:#e6db74">&#34;&lt;random&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;type&#34;</span>:<span style="color:#e6db74">&#34;standalone&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;password&#34;</span>:<span style="color:#e6db74">&#34;&lt;密文&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;standalone&#34;</span>:{
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;host&#34;</span>:<span style="color:#e6db74">&#34;127.0.0.1&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;port&#34;</span>:6379,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;ssl&#34;</span>:<span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="开启-ssl">开启 ssl<a hidden class="anchor" aria-hidden="true" href="#开启-ssl">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;codecEnabled&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;key&#34;</span>: <span style="color:#e6db74">&#34;&lt;random&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;standalone&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;password&#34;</span>: <span style="color:#e6db74">&#34;&lt;密文&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;standalone&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;127.0.0.1&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;ssl&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;caCertFile&#34;</span>: <span style="color:#e6db74">&#34;/certs/ca.crt&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;clientCertFile&#34;</span>: <span style="color:#e6db74">&#34;/certs/redis-client.crt&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;clientKeyFile&#34;</span>: <span style="color:#e6db74">&#34;/certs/redis-client.key&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="cluster">cluster<a hidden class="anchor" aria-hidden="true" href="#cluster">#</a></h4>
+<h5 id="未开启-ssl-1">未开启 ssl<a hidden class="anchor" aria-hidden="true" href="#未开启-ssl-1">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;codecEnabled&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;key&#34;</span>: <span style="color:#e6db74">&#34;&lt;random&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;cluster&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;password&#34;</span>: <span style="color:#e6db74">&#34;&lt;密文&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;cluster&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.1&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;ssl&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.2&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;ssl&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.3&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;ssl&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.4&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;ssl&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.5&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;ssl&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.6&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;ssl&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="开启-ssl-1">开启 ssl<a hidden class="anchor" aria-hidden="true" href="#开启-ssl-1">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;codecEnabled&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;key&#34;</span>: <span style="color:#e6db74">&#34;&lt;random&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;cluster&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;password&#34;</span>: <span style="color:#e6db74">&#34;&lt;密文&gt;&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;cluster&#34;</span>: [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.1&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.2&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.3&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.4&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.5&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;host&#34;</span>: <span style="color:#e6db74">&#34;192.168.0.6&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&#34;port&#34;</span>: <span style="color:#ae81ff">6379</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;ssl&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;caCertFile&#34;</span>: <span style="color:#e6db74">&#34;/certs/ca.crt&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;clientCertFile&#34;</span>: <span style="color:#e6db74">&#34;/certs/redis-client.crt&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;clientKeyFile&#34;</span>: <span style="color:#e6db74">&#34;/certs/redis-client.key&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="java-ssl">java-ssl<a hidden class="anchor" aria-hidden="true" href="#java-ssl">#</a></h3>
+<h4 id="方案一不配置证书仅使用安全协议">方案一：不配置证书（仅使用安全协议）<a hidden class="anchor" aria-hidden="true" href="#方案一不配置证书仅使用安全协议">#</a></h4>
+<blockquote>
+<p>tls-auth-clients optional</p>
+</blockquote>
+<h5 id="lettuce">Lettuce<a hidden class="anchor" aria-hidden="true" href="#lettuce">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		SslOptions sslOptions <span style="color:#f92672">=</span> SslOptions.<span style="color:#a6e22e">builder</span>().<span style="color:#a6e22e">jdkSslProvider</span>().<span style="color:#a6e22e">build</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		ClientOptions clientOptions <span style="color:#f92672">=</span> ClientOptions.<span style="color:#a6e22e">builder</span>().<span style="color:#a6e22e">sslOptions</span>(sslOptions).<span style="color:#a6e22e">build</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		LettuceClientConfiguration lettuceClientConfiguration <span style="color:#f92672">=</span> LettuceClientConfiguration.<span style="color:#a6e22e">builder</span>().<span style="color:#a6e22e">useSsl</span>().<span style="color:#a6e22e">disablePeerVerification</span>().<span style="color:#a6e22e">and</span>().<span style="color:#a6e22e">clientOptions</span>(clientOptions).<span style="color:#a6e22e">build</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		RedisStandaloneConfiguration configuration <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisStandaloneConfiguration();
+</span></span><span style="display:flex;"><span>		configuration.<span style="color:#a6e22e">setHostName</span>(<span style="color:#e6db74">&#34;192.168.81.98&#34;</span>);
+</span></span><span style="display:flex;"><span>		configuration.<span style="color:#a6e22e">setPort</span>(6379);
+</span></span><span style="display:flex;"><span>		configuration.<span style="color:#a6e22e">setPassword</span>(<span style="color:#e6db74">&#34;123456&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		LettuceConnectionFactory lettuceConnectionFactory <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LettuceConnectionFactory(configuration, lettuceClientConfiguration);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		lettuceConnectionFactory.<span style="color:#a6e22e">afterPropertiesSet</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		RedisTemplate<span style="color:#f92672">&lt;</span>String, Object<span style="color:#f92672">&gt;</span> redisTemplate <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisTemplate<span style="color:#f92672">&lt;&gt;</span>();
+</span></span><span style="display:flex;"><span>		redisTemplate.<span style="color:#a6e22e">setConnectionFactory</span>(lettuceConnectionFactory);
+</span></span><span style="display:flex;"><span>		redisTemplate.<span style="color:#a6e22e">setDefaultSerializer</span>(RedisSerializer.<span style="color:#a6e22e">string</span>());
+</span></span><span style="display:flex;"><span>		redisTemplate.<span style="color:#a6e22e">afterPropertiesSet</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		redisTemplate.<span style="color:#a6e22e">opsForValue</span>().<span style="color:#a6e22e">set</span>(<span style="color:#e6db74">&#34;b&#34;</span>, <span style="color:#e6db74">&#34;22&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(redisTemplate.<span style="color:#a6e22e">opsForValue</span>().<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#34;b&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	}
+</span></span></code></pre></div><h5 id="redisson">Redisson<a hidden class="anchor" aria-hidden="true" href="#redisson">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// redisson配置文件</span>
+</span></span><span style="display:flex;"><span>		Config config <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Config();
+</span></span><span style="display:flex;"><span>		config.<span style="color:#a6e22e">setCodec</span>(<span style="color:#66d9ef">new</span> JsonJacksonCodec());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 单机模式</span>
+</span></span><span style="display:flex;"><span>		SingleServerConfig ssc <span style="color:#f92672">=</span> config.<span style="color:#a6e22e">useSingleServer</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// No SSL certificate verification</span>
+</span></span><span style="display:flex;"><span>		ssc.<span style="color:#a6e22e">setSslVerificationMode</span>(SslVerificationMode.<span style="color:#a6e22e">NONE</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 地址</span>
+</span></span><span style="display:flex;"><span>		ssc.<span style="color:#a6e22e">setAddress</span>(<span style="color:#e6db74">&#34;rediss://192.168.81.98:6379&#34;</span>);
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 密码</span>
+</span></span><span style="display:flex;"><span>		ssc.<span style="color:#a6e22e">setPassword</span>(<span style="color:#e6db74">&#34;123456&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		RedissonClient redissonClient <span style="color:#f92672">=</span> Redisson.<span style="color:#a6e22e">create</span>(config);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 获取 RBucket 对象</span>
+</span></span><span style="display:flex;"><span>		RBucket<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> bucket <span style="color:#f92672">=</span> redissonClient.<span style="color:#a6e22e">getBucket</span>(<span style="color:#e6db74">&#34;aa&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 设置 Key-Value</span>
+</span></span><span style="display:flex;"><span>		bucket.<span style="color:#a6e22e">set</span>(<span style="color:#e6db74">&#34;22&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(bucket.<span style="color:#a6e22e">get</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	}
+</span></span></code></pre></div><h4 id="方案二配置证书双向认证">方案二：配置证书（双向认证）<a hidden class="anchor" aria-hidden="true" href="#方案二配置证书双向认证">#</a></h4>
+<blockquote>
+<p>tls-auth-clients optional/yes</p>
+</blockquote>
+<h5 id="lettuce-1">Lettuce<a hidden class="anchor" aria-hidden="true" href="#lettuce-1">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		SslOptions sslOptions <span style="color:#f92672">=</span> SslOptions.<span style="color:#a6e22e">builder</span>().<span style="color:#a6e22e">jdkSslProvider</span>().<span style="color:#a6e22e">sslContext</span>(sslContextBuilder <span style="color:#f92672">-&gt;</span> {
+</span></span><span style="display:flex;"><span>			sslContextBuilder.<span style="color:#a6e22e">trustManager</span>(<span style="color:#66d9ef">new</span> File(<span style="color:#e6db74">&#34;C:\\Java\\myredis\\certs\\ca.crt&#34;</span>));
+</span></span><span style="display:flex;"><span>			sslContextBuilder.<span style="color:#a6e22e">keyManager</span>(<span style="color:#66d9ef">new</span> File(<span style="color:#e6db74">&#34;C:\\Java\\myredis\\certs\\redis-client.crt&#34;</span>), <span style="color:#66d9ef">new</span> File(<span style="color:#e6db74">&#34;C:\\Java\\myredis\\certs\\redis-client.key&#34;</span>));
+</span></span><span style="display:flex;"><span>		}).<span style="color:#a6e22e">build</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		ClientOptions clientOptions <span style="color:#f92672">=</span> ClientOptions.<span style="color:#a6e22e">builder</span>().<span style="color:#a6e22e">sslOptions</span>(sslOptions).<span style="color:#a6e22e">build</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		LettuceClientConfiguration lettuceClientConfiguration <span style="color:#f92672">=</span> LettuceClientConfiguration.<span style="color:#a6e22e">builder</span>().<span style="color:#a6e22e">useSsl</span>().<span style="color:#a6e22e">and</span>().<span style="color:#a6e22e">clientOptions</span>(clientOptions).<span style="color:#a6e22e">build</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		RedisStandaloneConfiguration configuration <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisStandaloneConfiguration();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		configuration.<span style="color:#a6e22e">setHostName</span>(<span style="color:#e6db74">&#34;192.168.81.98&#34;</span>);
+</span></span><span style="display:flex;"><span>		configuration.<span style="color:#a6e22e">setPort</span>(6379);
+</span></span><span style="display:flex;"><span>		configuration.<span style="color:#a6e22e">setPassword</span>(<span style="color:#e6db74">&#34;123456&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		LettuceConnectionFactory lettuceConnectionFactory <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LettuceConnectionFactory(configuration, lettuceClientConfiguration);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		lettuceConnectionFactory.<span style="color:#a6e22e">afterPropertiesSet</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		RedisTemplate<span style="color:#f92672">&lt;</span>String, Object<span style="color:#f92672">&gt;</span> redisTemplate <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> RedisTemplate<span style="color:#f92672">&lt;&gt;</span>();
+</span></span><span style="display:flex;"><span>		redisTemplate.<span style="color:#a6e22e">setConnectionFactory</span>(lettuceConnectionFactory);
+</span></span><span style="display:flex;"><span>		redisTemplate.<span style="color:#a6e22e">setDefaultSerializer</span>(RedisSerializer.<span style="color:#a6e22e">string</span>());
+</span></span><span style="display:flex;"><span>		redisTemplate.<span style="color:#a6e22e">afterPropertiesSet</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		redisTemplate.<span style="color:#a6e22e">opsForValue</span>().<span style="color:#a6e22e">set</span>(<span style="color:#e6db74">&#34;b&#34;</span>, <span style="color:#e6db74">&#34;22&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(redisTemplate.<span style="color:#a6e22e">opsForValue</span>().<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#34;b&#34;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	}
+</span></span></code></pre></div><h5 id="redisson-1">Redisson<a hidden class="anchor" aria-hidden="true" href="#redisson-1">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>	<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String<span style="color:#f92672">[]</span> args) <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// redisson配置文件</span>
+</span></span><span style="display:flex;"><span>		Config config <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Config();
+</span></span><span style="display:flex;"><span>		config.<span style="color:#a6e22e">setCodec</span>(<span style="color:#66d9ef">new</span> JsonJacksonCodec());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 单机模式</span>
+</span></span><span style="display:flex;"><span>		SingleServerConfig ssc <span style="color:#f92672">=</span> config.<span style="color:#a6e22e">useSingleServer</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// KeyManagerFactory</span>
+</span></span><span style="display:flex;"><span>		KeyManagerFactory keyManagerFactory <span style="color:#f92672">=</span> keyManagerFactory(<span style="color:#e6db74">&#34;C:\\Java\\myredis\\certs\\redis-client.crt&#34;</span>, <span style="color:#e6db74">&#34;C:\\Java\\myredis\\certs\\redis-client.key&#34;</span>);
+</span></span><span style="display:flex;"><span>		ssc.<span style="color:#a6e22e">setSslKeyManagerFactory</span>(keyManagerFactory);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// TrustManagerFactory</span>
+</span></span><span style="display:flex;"><span>		TrustManagerFactory trustManagerFactory <span style="color:#f92672">=</span> trustManagerFactory(<span style="color:#e6db74">&#34;C:\\Java\\myredis\\certs\\ca.crt&#34;</span>);
+</span></span><span style="display:flex;"><span>		ssc.<span style="color:#a6e22e">setSslTrustManagerFactory</span>(trustManagerFactory);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 地址</span>
+</span></span><span style="display:flex;"><span>		ssc.<span style="color:#a6e22e">setAddress</span>(<span style="color:#e6db74">&#34;rediss://192.168.81.98:6379&#34;</span>);
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 密码</span>
+</span></span><span style="display:flex;"><span>		ssc.<span style="color:#a6e22e">setPassword</span>(<span style="color:#e6db74">&#34;123456&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		RedissonClient redissonClient <span style="color:#f92672">=</span> Redisson.<span style="color:#a6e22e">create</span>(config);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 获取 RBucket 对象</span>
+</span></span><span style="display:flex;"><span>		RBucket<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> bucket <span style="color:#f92672">=</span> redissonClient.<span style="color:#a6e22e">getBucket</span>(<span style="color:#e6db74">&#34;aa&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 设置 Key-Value</span>
+</span></span><span style="display:flex;"><span>		bucket.<span style="color:#a6e22e">set</span>(<span style="color:#e6db74">&#34;22&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(bucket.<span style="color:#a6e22e">get</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> KeyManagerFactory <span style="color:#a6e22e">keyManagerFactory</span>(String clientCertFile, String clientKeyFile) <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>		PrivateKey privateKey <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 1. 加载 redis.key 文件</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">try</span> (PEMParser pemParser <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> PEMParser(<span style="color:#66d9ef">new</span> FileReader(<span style="color:#e6db74">&#34;C:\\Java\\myredis\\certs\\redis-client.key&#34;</span>))) {
+</span></span><span style="display:flex;"><span>			Object object <span style="color:#f92672">=</span> pemParser.<span style="color:#a6e22e">readObject</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">// 2. 将 PEM 格式转换为 Java KeyPair</span>
+</span></span><span style="display:flex;"><span>			JcaPEMKeyConverter keyConverter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JcaPEMKeyConverter();
+</span></span><span style="display:flex;"><span>			KeyPair keyPair <span style="color:#f92672">=</span> keyConverter.<span style="color:#a6e22e">getKeyPair</span>((org.<span style="color:#a6e22e">bouncycastle</span>.<span style="color:#a6e22e">openssl</span>.<span style="color:#a6e22e">PEMKeyPair</span>) object);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">// 3. 提取私钥</span>
+</span></span><span style="display:flex;"><span>			privateKey <span style="color:#f92672">=</span> keyPair.<span style="color:#a6e22e">getPrivate</span>();
+</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">catch</span> (Exception e) {
+</span></span><span style="display:flex;"><span>			e.<span style="color:#a6e22e">printStackTrace</span>();
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 加载证书链</span>
+</span></span><span style="display:flex;"><span>		Certificate<span style="color:#f92672">[]</span> certChain <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Certificate<span style="color:#f92672">[</span>1<span style="color:#f92672">]</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">try</span> (FileInputStream fis <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream(<span style="color:#e6db74">&#34;C:\\Java\\myredis\\certs\\redis-client.crt&#34;</span>)) {
+</span></span><span style="display:flex;"><span>			CertificateFactory certFactory <span style="color:#f92672">=</span> CertificateFactory.<span style="color:#a6e22e">getInstance</span>(<span style="color:#e6db74">&#34;X.509&#34;</span>);
+</span></span><span style="display:flex;"><span>			certChain<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> certFactory.<span style="color:#a6e22e">generateCertificate</span>(fis);
+</span></span><span style="display:flex;"><span>		} <span style="color:#66d9ef">catch</span> (Exception e) {
+</span></span><span style="display:flex;"><span>			e.<span style="color:#a6e22e">printStackTrace</span>();
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 创建并初始化 KeyStore</span>
+</span></span><span style="display:flex;"><span>		KeyStore keyStore <span style="color:#f92672">=</span> KeyStore.<span style="color:#a6e22e">getInstance</span>(<span style="color:#e6db74">&#34;PKCS12&#34;</span>);
+</span></span><span style="display:flex;"><span>		keyStore.<span style="color:#a6e22e">load</span>(<span style="color:#66d9ef">null</span>, <span style="color:#66d9ef">null</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 设置密钥条目</span>
+</span></span><span style="display:flex;"><span>		String keyAlias <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;redis-client&#34;</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">char</span><span style="color:#f92672">[]</span> keyPassword <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>; <span style="color:#75715e">// 如果私钥有密码，则提供密码</span>
+</span></span><span style="display:flex;"><span>		keyStore.<span style="color:#a6e22e">setKeyEntry</span>(keyAlias, privateKey, keyPassword, certChain);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		KeyManagerFactory keyManagerFactory <span style="color:#f92672">=</span> KeyManagerFactory.<span style="color:#a6e22e">getInstance</span>(KeyManagerFactory.<span style="color:#a6e22e">getDefaultAlgorithm</span>());
+</span></span><span style="display:flex;"><span>		keyManagerFactory.<span style="color:#a6e22e">init</span>(keyStore, <span style="color:#66d9ef">null</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> keyManagerFactory;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> TrustManagerFactory <span style="color:#a6e22e">trustManagerFactory</span>(String caCertFile) <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 1. 创建一个新的 KeyStore</span>
+</span></span><span style="display:flex;"><span>		KeyStore keyStore <span style="color:#f92672">=</span> KeyStore.<span style="color:#a6e22e">getInstance</span>(<span style="color:#e6db74">&#34;PKCS12&#34;</span>);
+</span></span><span style="display:flex;"><span>		keyStore.<span style="color:#a6e22e">load</span>(<span style="color:#66d9ef">null</span>, <span style="color:#66d9ef">null</span>); <span style="color:#75715e">// 初始化空的 KeyStore</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 2. 加载 CA 证书</span>
+</span></span><span style="display:flex;"><span>		CertificateFactory certificateFactory <span style="color:#f92672">=</span> CertificateFactory.<span style="color:#a6e22e">getInstance</span>(<span style="color:#e6db74">&#34;X.509&#34;</span>);
+</span></span><span style="display:flex;"><span>		Certificate caCertificate;
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">try</span> (FileInputStream caCertInputStream <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream(caCertFile)) {
+</span></span><span style="display:flex;"><span>			caCertificate <span style="color:#f92672">=</span> certificateFactory.<span style="color:#a6e22e">generateCertificate</span>(caCertInputStream);
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 3. 将 CA 证书添加到 KeyStore</span>
+</span></span><span style="display:flex;"><span>		String alias <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;ca-cert&#34;</span>; <span style="color:#75715e">// 为证书设置一个别名</span>
+</span></span><span style="display:flex;"><span>		keyStore.<span style="color:#a6e22e">setCertificateEntry</span>(alias, caCertificate);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// 4. 初始化 TrustManagerFactory</span>
+</span></span><span style="display:flex;"><span>		TrustManagerFactory trustManagerFactory <span style="color:#f92672">=</span> TrustManagerFactory.<span style="color:#a6e22e">getInstance</span>(TrustManagerFactory.<span style="color:#a6e22e">getDefaultAlgorithm</span>());
+</span></span><span style="display:flex;"><span>		trustManagerFactory.<span style="color:#a6e22e">init</span>(keyStore);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> trustManagerFactory;
+</span></span><span style="display:flex;"><span>	}
+</span></span></code></pre></div><h2 id="性能对比">性能对比<a hidden class="anchor" aria-hidden="true" href="#性能对比">#</a></h2>
+<h3 id="未开启-ssl-2">未开启 ssl<a hidden class="anchor" aria-hidden="true" href="#未开启-ssl-2">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\1</span>0217&gt;docker exec -it redis redis-benchmark -h 192.168.81.98 -p <span style="color:#ae81ff">6379</span> -a <span style="color:#ae81ff">123456</span> -c <span style="color:#ae81ff">100</span> -n <span style="color:#ae81ff">100000</span> -d <span style="color:#ae81ff">1024</span> -t set,get -q
+</span></span><span style="display:flex;"><span>SET: 20370.75 requests per second, p50<span style="color:#f92672">=</span>4.631 msec
+</span></span><span style="display:flex;"><span>GET: 20060.18 requests per second, p50<span style="color:#f92672">=</span>4.695 msec
+</span></span></code></pre></div><h3 id="开启-ssl-2">开启 ssl<a hidden class="anchor" aria-hidden="true" href="#开启-ssl-2">#</a></h3>
+<h4 id="忽略证书验证">忽略证书验证<a hidden class="anchor" aria-hidden="true" href="#忽略证书验证">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\1</span>0217&gt;docker exec -it redis redis-benchmark --tls --insecure -h 192.168.81.98 -p <span style="color:#ae81ff">6379</span> -a <span style="color:#ae81ff">123456</span> -c <span style="color:#ae81ff">100</span> -n <span style="color:#ae81ff">100000</span> -d <span style="color:#ae81ff">1024</span> -t set,get -q
+</span></span><span style="display:flex;"><span>SET: 18439.98 requests per second, p50<span style="color:#f92672">=</span>4.775 msec
+</span></span><span style="display:flex;"><span>GET: 18511.66 requests per second, p50<span style="color:#f92672">=</span>4.695 msec
+</span></span></code></pre></div><p>性能下降 9.5 %</p>
+<h4 id="双向认证">双向认证<a hidden class="anchor" aria-hidden="true" href="#双向认证">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\1</span>0217&gt;docker exec -it redis redis-benchmark --tls --cert /certs/redis-client.crt --key /certs/redis-client.key --cacert /certs/ca.crt -h 192.168.81.98 -p <span style="color:#ae81ff">6379</span> -a <span style="color:#ae81ff">123456</span> -c <span style="color:#ae81ff">100</span> -n <span style="color:#ae81ff">100000</span> -d <span style="color:#ae81ff">1024</span> -t set,get -q
+</span></span><span style="display:flex;"><span>SET: 17445.92 requests per second, p50<span style="color:#f92672">=</span>4.607 msec
+</span></span><span style="display:flex;"><span>GET: 17711.65 requests per second, p50<span style="color:#f92672">=</span>4.607 msec
+</span></span></code></pre></div><p>性能下降 14.4 %</p>
+<h4 id="结论">结论<a hidden class="anchor" aria-hidden="true" href="#结论">#</a></h4>
+<table>
+  <thead>
+      <tr>
+          <th>开启 ssl -  忽略证书验证</th>
+          <th>开启 ssl - 双向认证</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>性能下降 9.5 %</td>
+          <td>性能下降 14.4 %</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="附录">附录<a hidden class="anchor" aria-hidden="true" href="#附录">#</a></h2>
+<h3 id="自签证书">自签证书<a hidden class="anchor" aria-hidden="true" href="#自签证书">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># 生成 CA 私钥和证书</span>
+</span></span><span style="display:flex;"><span>openssl genrsa -out ca.key <span style="color:#ae81ff">4096</span>
+</span></span><span style="display:flex;"><span>openssl req -x509 -new -nodes -key ca.key -days <span style="color:#ae81ff">3650</span> -out ca.crt -subj <span style="color:#e6db74">&#34;/CN=Redis-CA&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 生成 Redis 私钥和证书签名请求 (CSR)</span>
+</span></span><span style="display:flex;"><span>openssl genrsa -out redis-server.key <span style="color:#ae81ff">4096</span>
+</span></span><span style="display:flex;"><span>openssl req -new -key redis-server.key -out redis-server.csr -config openssl.cnf
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 使用 CA 签发 Redis 证书</span>
+</span></span><span style="display:flex;"><span>openssl x509 -req -in redis-server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out redis-server.crt -days <span style="color:#ae81ff">3650</span> -extensions v3_req -extfile openssl.cnf
+</span></span></code></pre></div><p>openssl.cnf</p>
+<pre tabindex="0"><code>[ req ]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[ req_distinguished_name ]
+CN = 192.168.81.98  # 主机名（例如，Redis 节点主机名）
+
+[ v3_req ]
+keyUsage = keyEncipherment, digitalSignature, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = 192.168.81.98       # 主机名（可以有多个）
+#DNS.2 = another-redis-host    # 其他主机名
+IP.1 = 192.168.81.98           # 节点 IP 地址
+#IP.2 = 192.168.1.11           # 其他节点 IP 地址
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://192.168.81.98:1313/vrvsite/">vrv site</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
